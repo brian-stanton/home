@@ -13,3 +13,11 @@
   tags:
   - git
 
+- name: Install productivity packages
+  become: true
+  apt:
+    name: [ "tig" ]
+  tags:
+    - install
+    - git
+
