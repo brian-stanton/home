@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  home:
+    build:
+      context: .
+#      args:
+    image: home:latest
+    container_name: home
+    volumes:
+      - .:/home/abf
+    ports:
+      - "8000:8000"  # Modify if your application uses different ports
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    command: ["tail",  "-f", "/dev/null"]
+

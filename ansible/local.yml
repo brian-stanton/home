@@ -1,0 +1,20 @@
+- hosts: localhost
+  connection: local
+  vars:
+    testrun: 1
+  pre_tasks:
+  - name: Update Apt
+    become: true
+    apt:
+      force_apt_get: true
+      update_cache: true
+      state: present
+    tags:
+      - install
+      - core
+  tasks:
+    - include: tasks/core-setup.yml
+    - include: tasks/git.yml
+    - include: tasks/zsh.yml
+    - include: tasks/productivity-tools.yml
+
