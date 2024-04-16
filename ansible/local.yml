@@ -13,8 +13,8 @@
       - install
       - core
   tasks:
-    - include: tasks/core-setup.yml
-    - include: tasks/git.yml
-    - include: tasks/zsh.yml
-    - include: tasks/productivity-tools.yml
+    - include_tasks: tasks/core-setup.yml
+    - include_tasks: tasks/git.yml
+    - include_tasks: tasks/zsh.yml
+    - include_tasks: tasks/productivity-tools.yml
 
