@@ -33,6 +33,18 @@
     - neovim
     - core
 
+- name: Install cargo
+  ansible.builtin.shell: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  args:
+    executable: /bin/bash
+  become: yes
+  become_user: abf
+  tags:
+    - install
+    - alacritty
+    - core
+
 - name: dconf i3
   shell: dconf write /org/mate/desktop/session/required-components/windowmanager "'i3'"
   tags:
