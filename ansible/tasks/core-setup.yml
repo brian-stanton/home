@@ -7,19 +7,20 @@
     - neovim
     - core
 
-- name: Install System Packages 2 (unzip, libtool, libtool-bin)
+- name: Install System Packages 2 (unzip, libtool, libtool-bin, libfontconfig1-dev)
   become: true
   apt:
-    name: [ "unzip", "libtool", "libtool-bin"]
+    name: ["unzip", "libtool", "libtool-bin", "libfontconfig1-dev"]
   tags:
     - install
     - neovim
+    - alacritty
     - core
 
 - name: Install System Packages 3 (the rest)
   become: true
   apt:
-    name: [ "compton", "curl", "htop", "golang", "lsof", "i3", "ccache", "python3-pip", "dconf-editor", "pavucontrol", "moreutils", "clangd", "ubuntu-mate-desktop" ]
+    name: ["compton", "curl", "htop", "golang", "lsof", "i3", "ccache", "python3-pip", "dconf-editor", "pavucontrol", "moreutils", "clangd", "ubuntu-mate-desktop"]
   tags:
     - install
     - core
@@ -40,6 +41,31 @@
     executable: /bin/bash
   become: yes
   become_user: abf
+  tags:
+    - install
+    - alacritty
+    - core
+
+- name: Install alacritty
+  ansible.builtin.shell: cargo install alacritty
+  args:
+    executable: /bin/bash
+  environment:
+    PATH: "/home/abf/.cargo/bin:{{ ansible_env.PATH }}"
+  become: yes
+  become_user: abf
+  tags:
+    - install
+    - alacritty
+    - core
+
+- name: Link alacritty to /usr/local/bin
+  become: yes
+  file:
+    src: /home/abf/.cargo/bin/alacritty
+    dest: /usr/local/bin/alacritty
+    state: link
+    force: yes
   tags:
     - install
     - alacritty
