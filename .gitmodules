@@ -2,3 +2,6 @@
 	path = dotfiles/
 	url = git@github.com:brian-stanton/dotfiles.git
 
+[submodule "dotfiles"]
+	path = dotfiles
+	url = git@github.com:brian-stanton/dotfiles.git
