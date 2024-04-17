@@ -17,4 +17,5 @@
     - include_tasks: tasks/git.yml
     - include_tasks: tasks/zsh.yml
     - include_tasks: tasks/productivity-tools.yml
+    - include_tasks: tasks/dotfiles.yml
 
