@@ -8,8 +8,6 @@ apt-get update && \
     apt-get clean autoclean && \
     apt-get autoremove --yes
 
-addgroup --gid 1000 abf
-adduser --gecos abf --uid 1000 --gid 1000 --disabled-password abf
 adduser abf sudo
 echo 'abf ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 

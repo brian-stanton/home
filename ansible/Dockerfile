@@ -13,12 +13,14 @@ RUN apt-get update && \
 
 FROM base AS home
 ARG TAGS
-RUN addgroup --gid 1000 abf
-RUN adduser --gecos abf --uid 1000 --gid 1000 --disabled-password abf
-RUN adduser abf sudo
-RUN echo 'abf ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
-USER abf
-WORKDIR /home/abf
+ARG user=abf
+
+RUN addgroup --gid 1000 $user
+RUN adduser --gecos $user --uid 1000 --gid 1000 --disabled-password $user
+RUN adduser $user sudo
+RUN echo "$user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+USER $user
+WORKDIR /home/$user
 
 # Don't need to run this here because we're just gonna copy, but in a new system, we'll need to grab the files
 # RUN git clone https://github.com/brian-stanton/home /code

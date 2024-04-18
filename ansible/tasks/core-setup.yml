@@ -52,7 +52,7 @@
   args:
     executable: /bin/bash
   environment:
-    PATH: "/home/abf/.cargo/bin:{{ ansible_env.PATH }}"
+    PATH: "/home/{{ user }}/.cargo/bin:{{ ansible_env.PATH }}"
   become: yes
   become_user: abf
   tags:
@@ -63,7 +63,7 @@
 - name: Link alacritty to /usr/local/bin
   become: yes
   file:
-    src: /home/abf/.cargo/bin/alacritty
+    src: "/home/{{ user }}/.cargo/bin/alacritty"
     dest: /usr/local/bin/alacritty
     state: link
     force: yes

@@ -1,36 +1,36 @@
 - name: Copy zsh config
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: /home/abf/
+    dest: "/home/{{ user }}/"
   loop:
-    - "/home/abf/code/home/dotfiles/.zshrc"
-    - "/home/abf/code/home/dotfiles/.zsh_profile"
+    - "/home/{{ user }}/code/home/dotfiles/.zshrc"
+    - "/home/{{ user }}/code/home/dotfiles/.zsh_profile"
   tags:
   - zsh
 
 - name: Copy i3 config
   ansible.builtin.copy:
-    src: /home/abf/code/home/dotfiles/.config/i3
-    dest: /home/abf/.config
-  become_user: abf
+    src: "/home/{{ user }}/code/home/dotfiles/.config/i3"
+    dest: "/home/{{ user }}/.config"
+  become_user: {{ user }}
   become: yes
   tags:
   - i3
 
 - name: Copy i3 config
   ansible.builtin.copy:
-    src: /home/abf/code/home/dotfiles/.config/i3status
-    dest: /home/abf/.config
-  become_user: abf
+    src: "/home/{{ user }}/code/home/dotfiles/.config/i3status"
+    dest: "/home/{{ user }}/.config"
+  become_user: {{ user }}
   become: yes
   tags:
   - i3
 
 - name: Copy alacritty config
   ansible.builtin.copy:
-    src: /home/abf/code/home/dotfiles/.config/alacritty
-    dest: /home/abf/.config
-  become_user: abf
+    src: "/home/{{ user }}/code/home/dotfiles/.config/alacritty"
+    dest: "/home/{{ user }}/.config"
+  become_user: {{ user }}
   become: yes
   tags:
   - alacritty
