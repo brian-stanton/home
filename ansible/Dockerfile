@@ -25,7 +25,9 @@ WORKDIR /home/$user
 # Don't need to run this here because we're just gonna copy, but in a new system, we'll need to grab the files
 # RUN git clone https://github.com/brian-stanton/home /code
 COPY . .
-RUN ansible-playbook $TAGS ssh2.yml
+# We also don't need to run ssh config, cause we already have the repo from the COPY
+# RUN ansible-playbook $TAGS ssh2.yml
+RUN sudo ansible-playbook $TAGS local.yml
 
 FROM home
 CMD [ "tail",  "-f", "/dev/null" ]
