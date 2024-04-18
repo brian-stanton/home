@@ -1,0 +1,36 @@
+- name: Clone neovim
+  ansible.builtin.git:
+     repo: https://github.com/neovim/neovim.git
+     dest: "/home/{{ user }}/neovim"
+     depth: 1
+     version: stable
+  tags:
+    - neovim
+    - core
+    - install
+
+- name: "Install neovim deps"
+  become: true
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+    - cmake
+    - gettext
+    - lua5.1
+    - liblua5.1-0-dev
+  tags:
+    - neovim
+    - core
+    - install
+
+- name: Neovim Make Install
+  become: true
+  ansible.builtin.command: sudo make install
+  args:
+    chdir: "/home/{{ user }}/code/neovim"
+  tags:
+    - neovim
+    - core
+    - install
