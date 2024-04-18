@@ -17,3 +17,12 @@
   tags:
   - i3
 
+- name: Copy alacritty config
+  ansible.builtin.copy:
+    src: /home/abf/code/home/dotfiles/.config/alacritty
+    dest: /home/abf/.config
+  become_user: abf
+  become: yes
+  tags:
+  - alacritty
+
