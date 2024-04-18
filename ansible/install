@@ -13,5 +13,5 @@ adduser --gecos abf --uid 1000 --gid 1000 --disabled-password abf
 adduser abf sudo
 echo 'abf ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
 
-sudo -u abf git clone https://github.com/brian-stanton/home /home/abf/code
+sudo -u abf git clone git@github.com:brian-stanton/home.git /home/abf/code
 
