@@ -6,3 +6,24 @@
     - install
     - productivity
 
+- name: Intall obsidian
+  become: true
+  ansible.builtin.shell: flatpak install flathub md.obsidian.Obsidian -y
+  args:
+    executable: /bin/bash
+  tags:
+    - install
+    - obsidian
+
+- name: Link obsidian to /usr/local/bin
+  become: yes
+  file:
+    src: /var/lib/flatpak/exports/bin/md.obsidian.Obsidian
+    dest: /usr/local/bin/obsidian
+    state: link
+    force: yes
+  tags:
+    - install
+    - obsidian
+    - core
+
