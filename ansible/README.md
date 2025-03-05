@@ -1,7 +1,7 @@
 
 1. Install ansible and grab repository. `ansible/install` has the script for this
 2. Generate ssh keys with ssh2.yml playbook and update github, `ansible-playbook ssh2.yml`
-3. `git pull` to retrieve dotfiles
+3. `git submodule update --init --recursive` to retrieve dotfiles
 4. make sure you've opened the MATE desktop, not gnome; `sudo ansible-playbook linux.yml` or `sudo ansible-playbook mac.yml`
 
 ### Notes
