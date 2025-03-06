@@ -4,6 +4,8 @@
      dest: "/home/{{ user }}/code/neovim"
      depth: 1
      version: stable
+  become_user: "{{ user }}"
+  become: true
   tags:
     - neovim
     - core
