@@ -1,16 +1,20 @@
 - name: New SSH Keys
   hosts: localhost
+  vars:
+    user: brian
   tasks:
     - name: "Create .ssh"
       ansible.builtin.file:
-        path: "~/.ssh"
+        path: "/home/{{ user }}/.ssh"
         state: directory
         mode: '0755'
+        owner: "{{ user }}"
 
     - name: generate SSH key "id_ed25519"
       community.crypto.openssh_keypair:
-        path: "~/.ssh/id_ed25519"
+        path: "/home/{{ user }}/.ssh/id_ed25519"
         type: ed25519
         state: present
         force: no
+        owner: "{{ user }}"
 
