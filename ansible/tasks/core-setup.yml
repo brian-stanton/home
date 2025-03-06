@@ -62,7 +62,7 @@
   args:
     executable: /bin/bash
   become: yes
-  become_user: abf
+  become_user: "{{ user }}"
   tags:
     - install
     - alacritty
@@ -75,7 +75,7 @@
   environment:
     PATH: "/home/{{ user }}/.cargo/bin:{{ ansible_env.PATH }}"
   become: yes
-  become_user: abf
+  become_user: "{{ user }}"
   tags:
     - install
     - alacritty
