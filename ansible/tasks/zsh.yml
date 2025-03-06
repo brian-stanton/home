@@ -2,7 +2,7 @@
   apt: name=zsh
   tags: &tags_for_zsh_tasks [ 'install', 'productivity', 'dotfiles', 'zsh' ]
 
-- name: Change shell to zsh
+- name: Change shell to zsh # make sure to update pam setting so this can run: https://askubuntu.com/questions/812420/chsh-always-asking-a-password-and-get-pam-authentication-failure
   shell: chsh -s $(which zsh)
   become_user: "{{ user }}"
   become: yes
