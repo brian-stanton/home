@@ -1,3 +1,4 @@
+
 - name: setup git email 
   git_config:
     name: user.email
@@ -5,6 +6,7 @@
     value: "stanton.brian.c@gmail.com"
   tags:
   - git
+
 - name: setup git username 
   git_config:
     name: user.name
@@ -13,7 +15,7 @@
   tags:
   - git
 
-- name: Install productivity packages
+- name: Install useful git tools
   become: true
   apt:
     name: [ "tig" ]
