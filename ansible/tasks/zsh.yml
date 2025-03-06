@@ -8,6 +8,7 @@
     regexp: '^auth\s+required\s+pam_shells.so'
     line: 'auth sufficient pam_shells.so'
     state: present
+  tags: *tags_for_zsh_tasks
 
 - name: Change shell to zsh # make sure to update pam setting so this can run: https://askubuntu.com/questions/812420/chsh-always-asking-a-password-and-get-pam-authentication-failure
   shell: chsh -s $(which zsh)
