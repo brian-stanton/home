@@ -12,7 +12,7 @@
   ansible.builtin.copy:
     src: "/home/{{ user }}/code/home/dotfiles/.config/i3"
     dest: "/home/{{ user }}/.config"
-  become_user: {{ user }}
+  become_user: "{{ user }}"
   become: yes
   tags:
   - i3
@@ -21,7 +21,7 @@
   ansible.builtin.copy:
     src: "/home/{{ user }}/code/home/dotfiles/.config/i3status"
     dest: "/home/{{ user }}/.config"
-  become_user: {{ user }}
+  become_user: "{{ user }}"
   become: yes
   tags:
   - i3
@@ -30,7 +30,7 @@
   ansible.builtin.copy:
     src: "/home/{{ user }}/code/home/dotfiles/.config/alacritty"
     dest: "/home/{{ user }}/.config"
-  become_user: {{ user }}
+  become_user: "{{ user }}"
   become: yes
   tags:
   - alacritty
