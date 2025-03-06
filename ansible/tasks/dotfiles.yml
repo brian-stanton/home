@@ -17,7 +17,7 @@
   tags:
   - i3
 
-- name: Copy i3 config
+- name: Copy i3status config
   ansible.builtin.copy:
     src: "/home/{{ user }}/code/home/dotfiles/.config/i3status"
     dest: "/home/{{ user }}/.config"
@@ -35,3 +35,11 @@
   tags:
   - alacritty
 
+- name: Copy neovim config
+  ansible.builtin.copy:
+    src: "/home/{{ user }}/code/home/dotfiles/.config/nvim"
+    dest: "/home/{{ user }}/.config"
+  become_user: "{{ user }}"
+  become: yes
+  tags:
+  - neovim
