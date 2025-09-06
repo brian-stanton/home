@@ -3,14 +3,14 @@
     src: "{{ item }}"
     dest: "/home/{{ user }}/"
   loop:
-    - "/home/{{ user }}/code/home/dotfiles/.zshrc"
-    - "/home/{{ user }}/code/home/dotfiles/.zsh_profile"
+    - "/home/{{ user }}/home/dotfiles/.zshrc"
+    - "/home/{{ user }}/home/dotfiles/.zsh_profile"
   tags:
   - zsh
 
 - name: Copy i3 config
   ansible.builtin.copy:
-    src: "/home/{{ user }}/code/home/dotfiles/.config/i3"
+    src: "/home/{{ user }}/home/dotfiles/.config/i3"
     dest: "/home/{{ user }}/.config"
   become_user: "{{ user }}"
   become: yes
@@ -19,7 +19,7 @@
 
 - name: Copy i3status config
   ansible.builtin.copy:
-    src: "/home/{{ user }}/code/home/dotfiles/.config/i3status"
+    src: "/home/{{ user }}/home/dotfiles/.config/i3status"
     dest: "/home/{{ user }}/.config"
   become_user: "{{ user }}"
   become: yes
@@ -28,7 +28,7 @@
 
 - name: Copy alacritty config
   ansible.builtin.copy:
-    src: "/home/{{ user }}/code/home/dotfiles/.config/alacritty"
+    src: "/home/{{ user }}/home/dotfiles/.config/alacritty"
     dest: "/home/{{ user }}/.config"
   become_user: "{{ user }}"
   become: yes
@@ -37,7 +37,7 @@
 
 - name: Copy neovim config
   ansible.builtin.copy:
-    src: "/home/{{ user }}/code/home/dotfiles/.config/nvim"
+    src: "/home/{{ user }}/home/dotfiles/.config/nvim"
     dest: "/home/{{ user }}/.config"
   become_user: "{{ user }}"
   become: yes
