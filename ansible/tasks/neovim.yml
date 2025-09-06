@@ -29,7 +29,7 @@
 
 - name: Neovim Make Install
   become: true
-  ansible.builtin.command: sudo make install
+  ansible.builtin.command: bash -c "make CMAKE_BUILD_TYPE=RelWithDebInfo && sudo make install"
   args:
     chdir: "/home/{{ user }}/code/neovim"
   tags:
