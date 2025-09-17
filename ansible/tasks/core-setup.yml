@@ -107,10 +107,19 @@
   tags:
     - install
     - core
+    - i3
 
 - name: dconf i3
   shell: dconf write /org/mate/desktop/background/show-desktop-icons "false"
   tags:
     - install
     - core
+    - i3
+
+- name: set keyboard repeat rate (delay 292ms, 76hz)
+  shell: DISPLAY=:0 XAUTHORITY=/home/{{ user }}/.Xauthority xset r rate 292 76
+  tags:
+    - install
+    - core
+    - keyboard
 
