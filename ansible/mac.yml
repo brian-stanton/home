@@ -1,16 +1,11 @@
-- hosts: localhost
+---
+- name: Select macOS target
+  hosts: localhost
   connection: local
-  vars:
-    user: brian
-  pre_tasks:
-  - name: Install homebrew
-    become: true
-    shell: |
-        /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-    tags:
-      - install
-      - core
-      - mac
+  gather_facts: false
   tasks:
-    - include_tasks: tasks/git.yml
+    - name: Set macOS target
+      ansible.builtin.set_fact:
+        home_target: Darwin
 
+- ansible.builtin.import_playbook: site.yml

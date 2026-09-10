@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+# First boot on a bare Ubuntu box: packages, ansible, user `abf`, clone this repo.
+# After this, log in as abf and run ./home/ansible/install linux
+set -euo pipefail
+
+if [[ "${EUID}" -ne 0 ]]; then
+  echo "bootstrap must run as root (sudo ./ansible/bootstrap)" >&2
+  exit 1
+fi
+
+apt-get update
+apt-get upgrade -y
+apt-get install -y mate software-properties-common curl git build-essential sudo
+apt-add-repository -y ppa:ansible/ansible
+apt-get update
+apt-get install -y ansible
+apt-get clean autoclean
+apt-get autoremove --yes
+
+if ! id -u abf >/dev/null 2>&1; then
+  addgroup --gid 1000 abf
+  adduser --gecos abf --uid 1000 --gid 1000 --disabled-password abf
+fi
+adduser abf sudo
+grep -q '^abf ALL=' /etc/sudoers || echo 'abf ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+
+if [[ ! -d /home/abf/home/.git ]]; then
+  sudo -u abf git clone git@github.com:brian-stanton/home.git /home/abf/home
+fi
+
+sudo -u abf git -C /home/abf/home submodule update --init --recursive
+
+echo "bootstrap done. as abf: cd ~/home && ./ansible/install linux"

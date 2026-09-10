@@ -1,0 +1,74 @@
+---
+core_packages:
+  - build-essential
+  - cmake
+  - pkg-config
+  - libpthread-stubs0-dev
+  - curl
+  - htop
+  - golang
+  - lsof
+  - ccache
+  - python3-pip
+  - moreutils
+  - gcc
+  - binutils
+  - unzip
+  - jq
+  - clang
+  - clangd
+  - xsel
+  - openjdk-8-jdk
+
+desktop_packages:
+  - compton
+  - i3
+  - dconf-editor
+  - pavucontrol
+  - ubuntu-mate-desktop
+  - xfe
+
+alacritty_build_packages:
+  - libfontconfig1-dev
+  - libtool
+  - libtool-bin
+  - cmake
+  - pkg-config
+
+neovim_build_packages:
+  - cmake
+  - gettext
+  - lua5.1
+  - liblua5.1-0-dev
+  - ninja-build
+  - unzip
+  - pkg-config
+  - build-essential
+
+git_packages:
+  - tig
+
+zsh_packages:
+  - zsh
+
+tmux_packages:
+  - tmux
+
+productivity_packages:
+  - tmux
+  - wireshark
+  - fzf
+  - gimp
+  - ripgrep
+
+font_packages:
+  - fonts-firacode
+  - fonts-kode-mono
+
+flatpak_packages:
+  - flatpak
+
+font_casks: []
+alacritty_casks: []
+obsidian_casks: []
+productivity_casks: []

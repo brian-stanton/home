@@ -1,20 +1,10 @@
-- name: New SSH Keys
+---
+- name: SSH keys
   hosts: localhost
+  connection: local
+  gather_facts: true
   vars:
-    user: brian
+    user: "{{ ansible_facts.user_id }}"
+    home_dir: "{{ ansible_facts.user_dir }}"
   tasks:
-    - name: "Create .ssh"
-      ansible.builtin.file:
-        path: "/home/{{ user }}/.ssh"
-        state: directory
-        mode: '0755'
-        owner: "{{ user }}"
-
-    - name: generate SSH key "id_ed25519"
-      community.crypto.openssh_keypair:
-        path: "/home/{{ user }}/.ssh/id_ed25519"
-        type: ed25519
-        state: present
-        force: no
-        owner: "{{ user }}"
-
+    - ansible.builtin.import_tasks: tasks/ssh.yml

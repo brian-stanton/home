@@ -1,0 +1,15 @@
+---
+- name: Ensure ~/.ssh exists
+  ansible.builtin.file:
+    path: "{{ home_dir }}/.ssh"
+    state: directory
+    mode: "0700"
+    owner: "{{ user }}"
+
+- name: Generate ed25519 SSH key
+  community.crypto.openssh_keypair:
+    path: "{{ home_dir }}/.ssh/id_ed25519"
+    type: ed25519
+    state: present
+    force: false
+    owner: "{{ user }}"

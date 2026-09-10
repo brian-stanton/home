@@ -1,17 +1,162 @@
 #!/usr/bin/env bash
-apt-get update && \
-    apt-get upgrade -y && \
-    apt-get install -y mate software-properties-common curl git build-essential sudo && \
-    apt-add-repository -y ppa:ansible/ansible && \
-    apt-get update && \
-    apt-get install -y ansible && \
-    apt-get clean autoclean && \
-    apt-get autoremove --yes
+# Provision this machine. Auto-detects macOS vs Ubuntu, or take an explicit target.
+#   ./ansible/install
+#   ./ansible/install neovim
+#   ./ansible/install mac neovim
+#   ./ansible/install linux core git
+set -euo pipefail
 
-addgroup --gid 1000 abf
-adduser --gecos abf --uid 1000 --gid 1000 --disabled-password abf
-adduser abf sudo
-echo 'abf ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO="$(cd "${ROOT}/.." && pwd)"
+cd "${ROOT}"
 
-sudo -u abf git clone git@github.com:brian-stanton/home.git /home/abf
+usage() {
+  cat <<'EOF'
+Usage: ansible/install [target] [component...]
 
+Targets (optional; detected from this machine if omitted):
+  mac | darwin
+  linux | ubuntu | debian
+
+Components (optional; default: everything):
+  core          compilers, curl, go, htop, ...
+  git           user.name / user.email and tig
+  zsh           zsh + login shell (Linux) + config
+  neovim        build from ~/personal/code/neovim + link config
+  alacritty     terminal + config
+  productivity  tmux, fzf, ripgrep, gimp, wireshark
+  tmux          tmux package + ~/.tmux.conf
+  obsidian      Obsidian
+  fonts         Fira Code, Kode Mono
+  desktop       Linux MATE+i3 session, keyboard, i3 configs
+  i3            alias for desktop
+  dotfiles      link configs only (no packages)
+  ssh           ed25519 key in ~/.ssh
+
+Examples:
+  ./ansible/install
+  ./ansible/install neovim
+  ./ansible/install neovim zsh
+  ./ansible/install mac neovim
+  ./ansible/install linux core git
+  ./ansible/install --check neovim
+  ./ansible/install --list
+
+Options:
+  --check, -C     dry run (ansible --check --diff)
+  --list          show playbook tags and exit
+  --help, -h      this help
+  --              extra args passed to ansible-playbook
+EOF
+}
+
+TARGET="auto"
+CHECK=0
+LIST=0
+COMPONENTS=()
+PASSTHRU=()
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    -h | --help)
+      usage
+      exit 0
+      ;;
+    --list)
+      LIST=1
+      shift
+      ;;
+    --check | -C)
+      CHECK=1
+      shift
+      ;;
+    --)
+      shift
+      PASSTHRU+=("$@")
+      break
+      ;;
+    mac | darwin)
+      TARGET="Darwin"
+      shift
+      ;;
+    linux | ubuntu | debian)
+      TARGET="Debian"
+      shift
+      ;;
+    -*)
+      echo "unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+    *)
+      IFS=',' read -ra parts <<<"$1"
+      COMPONENTS+=("${parts[@]}")
+      shift
+      ;;
+  esac
+done
+
+if [[ "${EUID}" -eq 0 && "${HOME_ALLOW_ROOT:-0}" != "1" ]]; then
+  echo "Run as your user, not root. Tasks sudo only when they need to." >&2
+  exit 1
+fi
+
+need_dotfiles=0
+if [[ ${#COMPONENTS[@]} -eq 0 ]]; then
+  need_dotfiles=1
+else
+  for component in "${COMPONENTS[@]}"; do
+    case "${component}" in
+      neovim | zsh | alacritty | desktop | i3 | tmux | dotfiles) need_dotfiles=1 ;;
+    esac
+  done
+fi
+
+if [[ "${need_dotfiles}" -eq 1 && ! -f "${REPO}/dotfiles/.config/nvim/init.lua" ]]; then
+  echo "dotfiles submodule is missing. From the repo root:" >&2
+  echo "  git submodule update --init --recursive" >&2
+  exit 1
+fi
+
+if ! command -v ansible-playbook >/dev/null 2>&1; then
+  echo "ansible-playbook not found; installing ansible..."
+  if [[ "$(uname -s)" == "Darwin" ]]; then
+    if ! command -v brew >/dev/null 2>&1; then
+      echo "Homebrew is required on macOS. Install it, then re-run." >&2
+      exit 1
+    fi
+    brew install ansible
+  else
+    sudo apt-get update
+    sudo apt-get install -y software-properties-common
+    sudo apt-add-repository -y ppa:ansible/ansible
+    sudo apt-get update
+    sudo apt-get install -y ansible
+  fi
+fi
+
+mkdir -p "${ROOT}/tmp" "${ROOT}/collections"
+ansible-galaxy collection install -r "${ROOT}/requirements.yml" -p "${ROOT}/collections" >/dev/null
+
+if [[ "${LIST}" -eq 1 ]]; then
+  exec ansible-playbook site.yml --list-tags
+fi
+
+cmd=(ansible-playbook site.yml -e "home_target=${TARGET}")
+
+if [[ ${#COMPONENTS[@]} -gt 0 ]]; then
+  IFS=','
+  cmd+=(--tags "${COMPONENTS[*]}")
+  unset IFS
+fi
+
+if [[ "${CHECK}" -eq 1 ]]; then
+  cmd+=(--check --diff)
+fi
+
+if [[ ${#PASSTHRU[@]} -gt 0 ]]; then
+  cmd+=("${PASSTHRU[@]}")
+fi
+
+printf '→ %s\n' "${cmd[*]}"
+exec "${cmd[@]}"

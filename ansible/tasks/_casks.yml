@@ -1,0 +1,11 @@
+---
+- name: "Install {{ package_label }} (Darwin casks)"
+  community.general.homebrew_cask:
+    name: "{{ casks }}"
+    state: present
+  environment:
+    HOMEBREW_NO_AUTO_UPDATE: "1"
+    HOMEBREW_NO_ENV_HINTS: "1"
+  when:
+    - ansible_facts.os_family == 'Darwin'
+    - casks | default([]) | length > 0
