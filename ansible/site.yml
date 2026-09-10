@@ -7,8 +7,17 @@
   gather_facts: true
 
   vars:
-    user: "{{ ansible_facts.user_id }}"
-    home_dir: "{{ ansible_facts.user_dir }}"
+    # sudo ansible-playbook → facts are root; use the login that invoked sudo.
+    user: "{{ lookup('env', 'SUDO_USER') or ansible_facts.user_id }}"
+    home_dir: >-
+      {{
+        ansible_facts.user_dir
+        if user == ansible_facts.user_id
+        else (
+          '/Users/' ~ user if ansible_facts.os_family == 'Darwin'
+          else '/home/' ~ user
+        )
+      }}
     repo_root: "{{ playbook_dir | dirname }}"
     dotfiles_dir: "{{ repo_root }}/dotfiles"
     src_root: "{{ repo_root | dirname }}"

@@ -19,7 +19,9 @@ target, Ansible uses the machine you are on (`Darwin` or `Debian`).
 2. `sudo ./ansible/bootstrap` — ansible, sudo for **your login**, clone there if needed
 3. As that same user: `cd ~/Documents/code/home && ./ansible/install linux`
 4. Reboot (or log out) and pick the MATE session. i3 is the window manager.
-5. Optional: `./ansible/install ssh`, then add the key to GitHub
+5. Optional: `./ansible/install ssh` (not `sudo`), then add the key to GitHub.
+   `sudo ansible-playbook ssh2.yml` used to write into `/root/.ssh`; it now
+   follows `$SUDO_USER`. Prefer the install command anyway.
 
 On a Mac, skip bootstrap. Homebrew and Ansible are installed if they are missing.
 

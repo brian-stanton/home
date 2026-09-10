@@ -13,3 +13,7 @@
     state: present
     force: false
     owner: "{{ user }}"
+
+- name: Show SSH key path
+  ansible.builtin.debug:
+    msg: "ed25519 key for {{ user }}: {{ home_dir }}/.ssh/id_ed25519.pub"
