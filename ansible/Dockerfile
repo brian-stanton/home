@@ -24,11 +24,13 @@ RUN if [ -z "$user" ] || [ "$user" = "root" ]; then \
     addgroup --gid 1000 "$user" && \
     adduser --gecos "$user" --uid 1000 --gid 1000 --disabled-password "$user" && \
     adduser "$user" sudo && \
-    echo "$user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    echo "$user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    mkdir -p "/home/${user}/Documents/code" && \
+    chown -R "${user}:${user}" "/home/${user}/Documents"
 
-COPY --chown=${user}:${user} . /home/${user}/home
+COPY --chown=${user}:${user} . /home/${user}/Documents/code/home
 USER ${user}
-WORKDIR /home/${user}/home
+WORKDIR /home/${user}/Documents/code/home
 RUN ./ansible/install linux ${COMPONENTS}
 
 CMD ["tail", "-f", "/dev/null"]

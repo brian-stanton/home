@@ -15,9 +15,9 @@ target, Ansible uses the machine you are on (`Darwin` or `Debian`).
 
 ### First boot (bare Ubuntu)
 
-1. Install git and clone this repo
-2. `sudo ./ansible/bootstrap` — ansible, sudo for **your login**, clone to `~/home`
-3. As that same user: `cd ~/home && ./ansible/install linux`
+1. Install git and clone this repo to `~/Documents/code/home`
+2. `sudo ./ansible/bootstrap` — ansible, sudo for **your login**, clone there if needed
+3. As that same user: `cd ~/Documents/code/home && ./ansible/install linux`
 4. Reboot (or log out) and pick the MATE session. i3 is the window manager.
 5. Optional: `./ansible/install ssh`, then add the key to GitHub
 
@@ -43,7 +43,7 @@ links still run if you asked for `desktop`. Do not set this on a real machine.
 
 ### Notes
 
-- Neovim is **built from source** on both targets at `~/personal/code/neovim` and installed to `~/.local` (no sudo). The first run clones `stable`; later runs never overwrite the checkout, then `make` + `make install` from whatever is in that tree. `~/.local/bin` is on PATH via `.zsh_profile`.
+- Neovim is **built from source** next to this repo (`../neovim`, e.g. `~/Documents/code/neovim` on Linux) and installed to `~/.local` (no sudo). The first run clones `stable`; later runs never overwrite the checkout, then `make` + `make install` from whatever is in that tree. `~/.local/bin` is on PATH via `.zsh_profile`.
 - Dotfiles are **linked**, not copied. Edits in `~/.config/nvim` or `~/.tmux.conf` are edits in the repo.
 - Tmux: `./ansible/install tmux` installs the binary and links `dotfiles/.tmux.conf`. Prefix is `C-a`. Reload with `prefix r`.
 - Alacritty on Mac comes from the official GitHub dmg (Homebrew disabled the cask — Gatekeeper). Linux still builds with cargo.

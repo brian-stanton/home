@@ -22,7 +22,7 @@ Components (optional; default: everything):
   core          compilers, curl, go, htop, ...
   git           user.name / user.email and tig
   zsh           zsh + login shell (Linux) + config
-  neovim        build from ~/personal/code/neovim + link config
+  neovim        build from ../neovim (next to this repo) + link config
   alacritty     terminal + config
   productivity  tmux, fzf, ripgrep, gimp, wireshark
   tmux          tmux package + ~/.tmux.conf

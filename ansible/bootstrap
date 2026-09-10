@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # First boot on a bare Ubuntu box: packages, ansible, sudo for the login
-# user, clone this repo into ~/home. After this, as that user:
-#   cd ~/home && ./ansible/install linux
+# user, clone this repo into ~/Documents/code/home. After this, as that user:
+#   cd ~/Documents/code/home && ./ansible/install linux
 set -euo pipefail
 
 if [[ "${EUID}" -ne 0 ]]; then
@@ -38,11 +38,14 @@ apt-get autoremove --yes
 adduser "$user" sudo
 grep -q "^${user} ALL=" /etc/sudoers || echo "${user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-repo="${home_dir}/home"
+code_root="${home_dir}/Documents/code"
+repo="${code_root}/home"
+sudo -u "$user" mkdir -p "$code_root"
+
 if [[ ! -d "${repo}/.git" ]]; then
   sudo -u "$user" git clone git@github.com:brian-stanton/home.git "$repo"
 fi
 
 sudo -u "$user" git -C "$repo" submodule update --init --recursive
 
-echo "bootstrap done. as ${user}: cd ~/home && ./ansible/install linux"
+echo "bootstrap done. as ${user}: cd ~/Documents/code/home && ./ansible/install linux"
