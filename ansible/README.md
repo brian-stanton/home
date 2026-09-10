@@ -16,11 +16,10 @@ target, Ansible uses the machine you are on (`Darwin` or `Debian`).
 ### First boot (bare Ubuntu)
 
 1. Install git and clone this repo
-2. `sudo ./ansible/bootstrap` — ansible, user `abf`, clone to `~/home`
-3. As `abf`: `git submodule update --init --recursive`
-4. `./ansible/install linux` — includes MATE, i3, and the i3 configs
-5. Reboot (or log out) and pick the MATE session. i3 is the window manager.
-6. Optional: `./ansible/install ssh`, then add the key to GitHub
+2. `sudo ./ansible/bootstrap` — ansible, sudo for **your login**, clone to `~/home`
+3. As that same user: `cd ~/home && ./ansible/install linux`
+4. Reboot (or log out) and pick the MATE session. i3 is the window manager.
+5. Optional: `./ansible/install ssh`, then add the key to GitHub
 
 On a Mac, skip bootstrap. Homebrew and Ansible are installed if they are missing.
 
@@ -48,5 +47,5 @@ links still run if you asked for `desktop`. Do not set this on a real machine.
 - Dotfiles are **linked**, not copied. Edits in `~/.config/nvim` or `~/.tmux.conf` are edits in the repo.
 - Tmux: `./ansible/install tmux` installs the binary and links `dotfiles/.tmux.conf`. Prefix is `C-a`. Reload with `prefix r`.
 - Alacritty on Mac comes from the official GitHub dmg (Homebrew disabled the cask — Gatekeeper). Linux still builds with cargo.
-- Docker is for testing the Ubuntu target: `docker compose -f ansible/docker-compose.yml build`
+- Docker is for testing the Ubuntu target: `docker compose -f ansible/docker-compose.yml build`. The image user is your host login (`$USER`), not a hardcoded name. Override with `HOME_USER=...` if needed.
 - Resolution in a VM: `xrandr --output Virtual-1 --mode 1920x1080`

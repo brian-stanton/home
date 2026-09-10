@@ -1,10 +1,28 @@
 #!/usr/bin/env bash
-# First boot on a bare Ubuntu box: packages, ansible, user `abf`, clone this repo.
-# After this, log in as abf and run ./home/ansible/install linux
+# First boot on a bare Ubuntu box: packages, ansible, sudo for the login
+# user, clone this repo into ~/home. After this, as that user:
+#   cd ~/home && ./ansible/install linux
 set -euo pipefail
 
 if [[ "${EUID}" -ne 0 ]]; then
   echo "bootstrap must run as root (sudo ./ansible/bootstrap)" >&2
+  exit 1
+fi
+
+user="${SUDO_USER:-}"
+if [[ -z "$user" || "$user" == "root" ]]; then
+  echo "run via sudo as your normal login, not as root: sudo ./ansible/bootstrap" >&2
+  exit 1
+fi
+
+if ! id -u "$user" >/dev/null 2>&1; then
+  echo "user ${user} does not exist" >&2
+  exit 1
+fi
+
+home_dir="$(getent passwd "$user" | cut -d: -f6)"
+if [[ -z "$home_dir" || ! -d "$home_dir" ]]; then
+  echo "could not resolve home directory for ${user}" >&2
   exit 1
 fi
 
@@ -17,17 +35,14 @@ apt-get install -y ansible
 apt-get clean autoclean
 apt-get autoremove --yes
 
-if ! id -u abf >/dev/null 2>&1; then
-  addgroup --gid 1000 abf
-  adduser --gecos abf --uid 1000 --gid 1000 --disabled-password abf
-fi
-adduser abf sudo
-grep -q '^abf ALL=' /etc/sudoers || echo 'abf ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers
+adduser "$user" sudo
+grep -q "^${user} ALL=" /etc/sudoers || echo "${user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-if [[ ! -d /home/abf/home/.git ]]; then
-  sudo -u abf git clone git@github.com:brian-stanton/home.git /home/abf/home
+repo="${home_dir}/home"
+if [[ ! -d "${repo}/.git" ]]; then
+  sudo -u "$user" git clone git@github.com:brian-stanton/home.git "$repo"
 fi
 
-sudo -u abf git -C /home/abf/home submodule update --init --recursive
+sudo -u "$user" git -C "$repo" submodule update --init --recursive
 
-echo "bootstrap done. as abf: cd ~/home && ./ansible/install linux"
+echo "bootstrap done. as ${user}: cd ~/home && ./ansible/install linux"

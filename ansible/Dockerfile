@@ -11,12 +11,17 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 FROM base AS home
-ARG user=abf
+# Host login; docker compose passes ${USER}. Do not default this to a name.
+ARG user
 ARG COMPONENTS=neovim
 ENV HOME_HEADLESS=1
 ENV HOME_ALLOW_ROOT=0
 
-RUN addgroup --gid 1000 "$user" && \
+RUN if [ -z "$user" ] || [ "$user" = "root" ]; then \
+      echo "build-arg 'user' must be a non-root login (the user you are logged in as)" >&2; \
+      exit 1; \
+    fi && \
+    addgroup --gid 1000 "$user" && \
     adduser --gecos "$user" --uid 1000 --gid 1000 --disabled-password "$user" && \
     adduser "$user" sudo && \
     echo "$user ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers

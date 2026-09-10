@@ -4,7 +4,7 @@ services:
       context: ..
       dockerfile: ansible/Dockerfile
       args:
-        user: abf
+        user: ${HOME_USER:-${USER}}
         COMPONENTS: neovim
     image: home:latest
     container_name: home
