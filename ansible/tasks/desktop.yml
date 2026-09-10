@@ -10,25 +10,29 @@
   when: ansible_facts.os_family == 'Debian'
 
 - name: Use i3 as the MATE window manager
-  ansible.builtin.command: dconf write /org/mate/desktop/session/required-components/windowmanager "'i3'"
+  ansible.builtin.command:
+    argv:
+      - dbus-run-session
+      - --
+      - dconf
+      - write
+      - /org/mate/desktop/session/required-components/windowmanager
+      - "'i3'"
   changed_when: false
   when:
     - ansible_facts.os_family == 'Debian'
     - not home_headless
 
 - name: Hide MATE desktop icons
-  ansible.builtin.command: dconf write /org/mate/desktop/background/show-desktop-icons "false"
+  ansible.builtin.command:
+    argv:
+      - dbus-run-session
+      - --
+      - dconf
+      - write
+      - /org/mate/desktop/background/show-desktop-icons
+      - "false"
   changed_when: false
-  when:
-    - ansible_facts.os_family == 'Debian'
-    - not home_headless
-
-- name: Set keyboard repeat rate
-  ansible.builtin.command: xset r rate 292 76
-  changed_when: false
-  environment:
-    DISPLAY: "{{ ansible_facts.env.DISPLAY | default(':0') }}"
-    XAUTHORITY: "{{ home_dir }}/.Xauthority"
   when:
     - ansible_facts.os_family == 'Debian'
     - not home_headless

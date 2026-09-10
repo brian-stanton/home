@@ -22,11 +22,9 @@
       PATH: "{{ lookup('env', 'HOME') }}/.local/bin:/opt/homebrew/bin:/usr/local/bin:{{ lookup('env', 'PATH') }}"
     git_user_name: brian-stanton
     git_user_email: stanton.brian.c@gmail.com
-    home_headless: >-
-      {{
-        (lookup('env', 'HOME_HEADLESS') | default('0', true) | bool)
-        or (ansible_facts.os_family == 'Debian' and ansible_facts.env.DISPLAY is not defined)
-      }}
+    # Opt out of MATE/i3 session commands (dconf). Docker sets this.
+    # Desktop packages and i3 configs still install on Linux.
+    home_headless: "{{ lookup('env', 'HOME_HEADLESS') | default('0', true) | bool }}"
 
   environment:
     PATH: "{{ lookup('env', 'HOME') }}/.local/bin:/opt/homebrew/bin:/usr/local/bin:{{ lookup('env', 'PATH') }}"

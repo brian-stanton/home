@@ -22,10 +22,13 @@ core_packages:
 
 desktop_packages:
   - compton
+  - dbus
   - i3
+  - dconf-cli
   - dconf-editor
   - pavucontrol
   - ubuntu-mate-desktop
+  - x11-xserver-utils
   - xfe
 
 alacritty_build_packages:

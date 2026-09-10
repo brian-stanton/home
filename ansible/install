@@ -28,7 +28,7 @@ Components (optional; default: everything):
   tmux          tmux package + ~/.tmux.conf
   obsidian      Obsidian
   fonts         Fira Code, Kode Mono
-  desktop       Linux MATE+i3 session, keyboard, i3 configs
+  desktop       Linux MATE + i3 packages, session, and configs
   i3            alias for desktop
   dotfiles      link configs only (no packages)
   ssh           ed25519 key in ~/.ssh
