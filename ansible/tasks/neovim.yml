@@ -1,38 +1,61 @@
+---
+# One source tree on every machine. Clone once (update: false) so later runs
+# never reset your checkout. Install into ~/.local so `make install` does not
+# need sudo (and cannot root-own the build dir).
+- name: Check for Xcode command line tools
+  ansible.builtin.command: xcode-select -p
+  register: xcode_clt
+  changed_when: false
+  failed_when: false
+  check_mode: false
+  when: ansible_facts.os_family == 'Darwin'
+
+- name: Require Xcode command line tools
+  ansible.builtin.assert:
+    that:
+      - xcode_clt is not skipped
+      - xcode_clt.rc == 0
+    fail_msg: "Install compiler tools first: xcode-select --install"
+  when: ansible_facts.os_family == 'Darwin'
+
+- name: Install neovim build dependencies
+  ansible.builtin.include_tasks:
+    file: tasks/_packages.yml
+    apply:
+      tags: [always]
+  vars:
+    packages: "{{ neovim_build_packages }}"
+    package_label: neovim build dependencies
+
+- name: Ensure neovim source parent exists
+  ansible.builtin.file:
+    path: "{{ src_root }}"
+    state: directory
+    mode: "0755"
+
+- name: Ensure neovim install prefix exists
+  ansible.builtin.file:
+    path: "{{ neovim_prefix }}/bin"
+    state: directory
+    mode: "0755"
+
 - name: Clone neovim
   ansible.builtin.git:
-     repo: https://github.com/neovim/neovim.git
-     dest: "/home/{{ user }}/code/neovim"
-     depth: 1
-     version: stable
-  become_user: "{{ user }}"
-  become: true
-  tags:
-    - neovim
-    - core
-    - install
+    repo: "{{ neovim_repo }}"
+    dest: "{{ neovim_src }}"
+    version: "{{ neovim_git_ref }}"
+    update: false
 
-- name: "Install neovim deps"
-  become: true
-  apt:
-    name: "{{ packages }}"
-    state: present
-  vars:
-    packages:
-    - cmake
-    - gettext
-    - lua5.1
-    - liblua5.1-0-dev
-  tags:
-    - neovim
-    - core
-    - install
+- name: Build neovim
+  community.general.make:
+    chdir: "{{ neovim_src }}"
+    params:
+      CMAKE_BUILD_TYPE: "{{ neovim_build_type }}"
+      CMAKE_INSTALL_PREFIX: "{{ neovim_prefix }}"
+  environment: "{{ neovim_build_env }}"
 
-- name: Neovim Make Install
-  become: true
-  ansible.builtin.command: bash -c "make CMAKE_BUILD_TYPE=RelWithDebInfo && sudo make install"
-  args:
-    chdir: "/home/{{ user }}/code/neovim"
-  tags:
-    - neovim
-    - core
-    - install
+- name: Install neovim
+  community.general.make:
+    chdir: "{{ neovim_src }}"
+    target: install
+  environment: "{{ neovim_build_env }}"

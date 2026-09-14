@@ -1,0 +1,8 @@
+.git
+**/__pycache__
+ansible/collections
+ansible/tmp
+**/*.retry
+notes
+notes/.obsidian
+**/.DS_Store

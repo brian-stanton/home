@@ -1,0 +1,46 @@
+---
+core_packages:
+  - cmake
+  - jq
+  - go
+  - htop
+  - ccache
+
+desktop_packages: []
+alacritty_build_packages: []
+neovim_build_packages:
+  - ninja
+  - cmake
+  - gettext
+  - curl
+
+git_packages:
+  - tig
+
+zsh_packages: []
+
+tmux_packages:
+  - tmux
+
+productivity_packages:
+  - tmux
+  - fzf
+  - ripgrep
+
+font_packages: []
+flatpak_packages: []
+
+font_casks:
+  - font-fira-code
+  - font-kode-mono
+
+alacritty_casks: []
+alacritty_dmg_version: "0.17.0"
+alacritty_dmg_url: "https://github.com/alacritty/alacritty/releases/download/v{{ alacritty_dmg_version }}/Alacritty-v{{ alacritty_dmg_version }}.dmg"
+
+obsidian_casks:
+  - obsidian
+
+productivity_casks:
+  - gimp
+  - wireshark

@@ -1,0 +1,18 @@
+---
+- name: Install fonts
+  ansible.builtin.include_tasks:
+    file: tasks/_packages.yml
+    apply:
+      tags: [always]
+  vars:
+    packages: "{{ font_packages }}"
+    package_label: fonts
+
+- name: Install font casks
+  ansible.builtin.include_tasks:
+    file: tasks/_casks.yml
+    apply:
+      tags: [always]
+  vars:
+    casks: "{{ font_casks }}"
+    package_label: fonts

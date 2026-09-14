@@ -1,18 +1,16 @@
-- name: Install ZSH
-  apt: name=zsh
-  tags: &tags_for_zsh_tasks [ 'install', 'productivity', 'dotfiles', 'zsh' ]
+---
+- name: Install zsh
+  ansible.builtin.include_tasks:
+    file: tasks/_packages.yml
+    apply:
+      tags: [always]
+  vars:
+    packages: "{{ zsh_packages }}"
+    package_label: zsh
 
-- name: Ensure /etc/pam.d/chsh is configured to allow ansible to change the shell
-  lineinfile:
-    path: /etc/pam.d/chsh
-    regexp: '^auth\s+required\s+pam_shells.so'
-    line: 'auth sufficient pam_shells.so'
-    state: present
-  tags: *tags_for_zsh_tasks
-
-- name: Change shell to zsh # make sure to update pam setting so this can run: https://askubuntu.com/questions/812420/chsh-always-asking-a-password-and-get-pam-authentication-failure
-  shell: chsh -s $(which zsh)
-  become_user: "{{ user }}"
-  become: yes
-  tags: *tags_for_zsh_tasks
-
+- name: Set login shell to zsh
+  ansible.builtin.user:
+    name: "{{ user }}"
+    shell: /usr/bin/zsh
+  become: true
+  when: ansible_facts.os_family == 'Debian'

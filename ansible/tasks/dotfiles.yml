@@ -1,45 +1,79 @@
-- name: Copy zsh config
-  ansible.builtin.copy:
-    src: "{{ item }}"
-    dest: "/home/{{ user }}/"
-  loop:
-    - "/home/{{ user }}/home/dotfiles/.zshrc"
-    - "/home/{{ user }}/home/dotfiles/.zsh_profile"
-  tags:
-  - zsh
+---
+- name: Link zshrc
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ dotfiles_dir }}/.zshrc"
+      dest: "{{ home_dir }}/.zshrc"
+  tags: [zsh, dotfiles]
 
-- name: Copy i3 config
-  ansible.builtin.copy:
-    src: "/home/{{ user }}/home/dotfiles/.config/i3"
-    dest: "/home/{{ user }}/.config"
-  become_user: "{{ user }}"
-  become: yes
-  tags:
-  - i3
+- name: Link zsh_profile
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ dotfiles_dir }}/.zsh_profile"
+      dest: "{{ home_dir }}/.zsh_profile"
+  tags: [zsh, dotfiles]
 
-- name: Copy i3status config
-  ansible.builtin.copy:
-    src: "/home/{{ user }}/home/dotfiles/.config/i3status"
-    dest: "/home/{{ user }}/.config"
-  become_user: "{{ user }}"
-  become: yes
-  tags:
-  - i3
+- name: Link alacritty config
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ dotfiles_dir }}/.config/alacritty"
+      dest: "{{ home_dir }}/.config/alacritty"
+  tags: [alacritty, dotfiles]
 
-- name: Copy alacritty config
-  ansible.builtin.copy:
-    src: "/home/{{ user }}/home/dotfiles/.config/alacritty"
-    dest: "/home/{{ user }}/.config"
-  become_user: "{{ user }}"
-  become: yes
-  tags:
-  - alacritty
+- name: Link neovim config
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ dotfiles_dir }}/.config/nvim"
+      dest: "{{ home_dir }}/.config/nvim"
+  tags: [neovim, dotfiles]
 
-- name: Copy neovim config
-  ansible.builtin.copy:
-    src: "/home/{{ user }}/home/dotfiles/.config/nvim"
-    dest: "/home/{{ user }}/.config"
-  become_user: "{{ user }}"
-  become: yes
-  tags:
-  - neovim
+- name: Link tmux config
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ dotfiles_dir }}/.tmux.conf"
+      dest: "{{ home_dir }}/.tmux.conf"
+  tags: [tmux, dotfiles, productivity]
+
+- name: Link i3 config
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ dotfiles_dir }}/.config/i3"
+      dest: "{{ home_dir }}/.config/i3"
+  when: ansible_facts.os_family == 'Debian'
+  tags: [desktop, i3, dotfiles]
+
+- name: Link i3status config
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ dotfiles_dir }}/.config/i3status"
+      dest: "{{ home_dir }}/.config/i3status"
+  when: ansible_facts.os_family == 'Debian'
+  tags: [desktop, i3, dotfiles]
