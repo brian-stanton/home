@@ -29,7 +29,8 @@ desktop_packages:
   - pavucontrol
   - ubuntu-mate-desktop
   - x11-xserver-utils
-  - xfe
+  # xfe Conflicts: im-config, which ubuntu-mate-desktop pulls in via
+  # ubuntu-mate-default-settings. Caja is the MATE file manager.
 
 alacritty_build_packages:
   - libfontconfig1-dev
