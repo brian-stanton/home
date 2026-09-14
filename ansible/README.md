@@ -50,4 +50,4 @@ links still run if you asked for `desktop`. Do not set this on a real machine.
 - Tmux: `./ansible/install tmux` installs the binary and links `dotfiles/.tmux.conf`. Prefix is `C-a`. Reload with `prefix r`.
 - Alacritty on Mac comes from the official GitHub dmg (Homebrew disabled the cask — Gatekeeper). Linux still builds with cargo.
 - Docker is for testing the Ubuntu target: `docker compose -f ansible/docker-compose.yml build`. The image user is your host login (`$USER`), not a hardcoded name. Override with `HOME_USER=...` if needed.
-- Resolution in a VM: `xrandr --output Virtual-1 --mode 1920x1080`
+- Display: `~/.config/i3/home-display` picks each output’s preferred mode and 1x/2x DPI. No hardcoded resolution.
