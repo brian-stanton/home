@@ -99,32 +99,35 @@
       tags: [always]
 
   tasks:
+    # Profiles: core (portable), desktop (GUI terminal + Linux WM), apps (extras).
+    # Fine-grained tags still work. `core` is the portable env; `toolchain` is
+    # compilers/htop only.
     - ansible.builtin.import_tasks: tasks/core.yml
-      tags: [core]
+      tags: [core, toolchain]
 
     - ansible.builtin.import_tasks: tasks/git.yml
-      tags: [git]
+      tags: [git, core]
 
     - ansible.builtin.import_tasks: tasks/zsh.yml
-      tags: [zsh]
+      tags: [zsh, core]
 
     - ansible.builtin.import_tasks: tasks/neovim.yml
-      tags: [neovim]
+      tags: [neovim, core]
 
     - ansible.builtin.import_tasks: tasks/alacritty.yml
-      tags: [alacritty]
+      tags: [alacritty, desktop]
 
-    - ansible.builtin.import_tasks: tasks/productivity.yml
-      tags: [productivity]
+    - ansible.builtin.import_tasks: tasks/apps.yml
+      tags: [apps, productivity]
 
     - ansible.builtin.import_tasks: tasks/tmux.yml
-      tags: [tmux]
+      tags: [tmux, core]
 
     - ansible.builtin.import_tasks: tasks/obsidian.yml
-      tags: [obsidian]
+      tags: [obsidian, apps, productivity]
 
     - ansible.builtin.import_tasks: tasks/fonts.yml
-      tags: [fonts]
+      tags: [fonts, core]
 
     - ansible.builtin.import_tasks: tasks/desktop.yml
       tags: [desktop, i3]

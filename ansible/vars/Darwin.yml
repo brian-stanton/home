@@ -5,6 +5,8 @@ core_packages:
   - go
   - htop
   - ccache
+  - fzf
+  - ripgrep
 
 desktop_packages: []
 alacritty_build_packages: []
@@ -22,10 +24,7 @@ zsh_packages: []
 tmux_packages:
   - tmux
 
-productivity_packages:
-  - tmux
-  - fzf
-  - ripgrep
+apps_packages: []
 
 font_packages: []
 flatpak_packages: []
@@ -41,6 +40,6 @@ alacritty_dmg_url: "https://github.com/alacritty/alacritty/releases/download/v{{
 obsidian_casks:
   - obsidian
 
-productivity_casks:
+apps_casks:
   - gimp
   - wireshark

@@ -18,7 +18,8 @@ core_packages:
   - clang
   - clangd
   - xsel
-  - openjdk-8-jdk
+  - fzf
+  - ripgrep
 
 desktop_packages:
   - compton
@@ -59,12 +60,10 @@ zsh_packages:
 tmux_packages:
   - tmux
 
-productivity_packages:
-  - tmux
+apps_packages:
+  - openjdk-8-jdk
   - wireshark
-  - fzf
   - gimp
-  - ripgrep
 
 font_packages:
   - fonts-firacode
@@ -76,4 +75,4 @@ flatpak_packages:
 font_casks: []
 alacritty_casks: []
 obsidian_casks: []
-productivity_casks: []
+apps_casks: []

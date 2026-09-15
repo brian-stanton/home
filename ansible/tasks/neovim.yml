@@ -46,6 +46,34 @@
     version: "{{ neovim_git_ref }}"
     update: false
 
+- name: Stat neovim CMake cache
+  ansible.builtin.stat:
+    path: "{{ neovim_src }}/.deps/CMakeCache.txt"
+  register: neovim_deps_cache
+
+- name: Check neovim CMake cache path
+  ansible.builtin.command:
+    argv:
+      - grep
+      - -Fq
+      - "{{ neovim_src }}"
+      - "{{ neovim_src }}/.deps/CMakeCache.txt"
+  register: neovim_cmake_path
+  changed_when: false
+  failed_when: false
+  when: neovim_deps_cache.stat.exists
+
+- name: Wipe neovim build dirs if the source tree was moved
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ neovim_src }}/.deps"
+    - "{{ neovim_src }}/build"
+  when:
+    - neovim_deps_cache.stat.exists
+    - neovim_cmake_path.rc != 0
+
 - name: Build neovim
   community.general.make:
     chdir: "{{ neovim_src }}"

@@ -8,7 +8,7 @@
     link:
       src: "{{ dotfiles_dir }}/.zshrc"
       dest: "{{ home_dir }}/.zshrc"
-  tags: [zsh, dotfiles]
+  tags: [zsh, core, dotfiles]
 
 - name: Link zsh_profile
   ansible.builtin.include_tasks:
@@ -19,7 +19,18 @@
     link:
       src: "{{ dotfiles_dir }}/.zsh_profile"
       dest: "{{ home_dir }}/.zsh_profile"
-  tags: [zsh, dotfiles]
+  tags: [zsh, core, dotfiles]
+
+- name: Link zprofile
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ dotfiles_dir }}/.zprofile"
+      dest: "{{ home_dir }}/.zprofile"
+  tags: [zsh, core, dotfiles]
 
 - name: Link alacritty config
   ansible.builtin.include_tasks:
@@ -30,7 +41,7 @@
     link:
       src: "{{ dotfiles_dir }}/.config/alacritty"
       dest: "{{ home_dir }}/.config/alacritty"
-  tags: [alacritty, dotfiles]
+  tags: [alacritty, desktop, dotfiles]
 
 - name: Link neovim config
   ansible.builtin.include_tasks:
@@ -41,7 +52,7 @@
     link:
       src: "{{ dotfiles_dir }}/.config/nvim"
       dest: "{{ home_dir }}/.config/nvim"
-  tags: [neovim, dotfiles]
+  tags: [neovim, core, dotfiles]
 
 - name: Link tmux config
   ansible.builtin.include_tasks:
@@ -52,7 +63,7 @@
     link:
       src: "{{ dotfiles_dir }}/.tmux.conf"
       dest: "{{ home_dir }}/.tmux.conf"
-  tags: [tmux, dotfiles, productivity]
+  tags: [tmux, core, dotfiles]
 
 - name: Link xprofile
   ansible.builtin.include_tasks:

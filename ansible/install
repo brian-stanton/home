@@ -18,27 +18,35 @@ Targets (optional; detected from this machine if omitted):
   mac | darwin
   linux | ubuntu | debian
 
-Components (optional; default: everything):
-  core          compilers, curl, go, htop, ...
+Profiles (optional; default: everything):
+  core          portable env: toolchain, git, zsh, neovim, tmux, fonts, fzf, ripgrep
+  desktop       alacritty + (Linux) MATE/i3
+  apps          obsidian, gimp, wireshark, Java 8 (Linux)
+
+Components (optional; still work individually):
+  toolchain     compilers, curl, go, htop (subset of core)
   git           user.name / user.email and tig
   zsh           zsh + login shell (Linux) + config
   neovim        build from ../neovim (next to this repo) + link config
   alacritty     terminal + config
-  productivity  tmux, fzf, ripgrep, gimp, wireshark
   tmux          tmux package + ~/.tmux.conf
-  obsidian      Obsidian
   fonts         Fira Code, Kode Mono
   desktop       Linux MATE + i3 packages, session, and configs
   i3            alias for desktop
+  apps          extra GUI/tools (obsidian, gimp, wireshark, Java 8)
+  productivity  alias for apps
+  obsidian      Obsidian only
   dotfiles      link configs only (no packages)
   ssh           ed25519 key in ~/.ssh
 
 Examples:
   ./ansible/install
+  ./ansible/install core
+  ./ansible/install core desktop
   ./ansible/install neovim
   ./ansible/install neovim zsh
   ./ansible/install mac neovim
-  ./ansible/install linux core git
+  ./ansible/install linux core
   ./ansible/install --check neovim
   ./ansible/install --list
 
@@ -107,7 +115,7 @@ if [[ ${#COMPONENTS[@]} -eq 0 ]]; then
 else
   for component in "${COMPONENTS[@]}"; do
     case "${component}" in
-      neovim | zsh | alacritty | desktop | i3 | tmux | dotfiles) need_dotfiles=1 ;;
+      neovim | zsh | alacritty | desktop | i3 | tmux | dotfiles | core) need_dotfiles=1 ;;
     esac
   done
 fi
