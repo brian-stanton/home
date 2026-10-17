@@ -100,3 +100,29 @@
       dest: "{{ home_dir }}/.config/i3status"
   when: ansible_facts.os_family == 'Debian'
   tags: [desktop, i3, dotfiles]
+
+# iTerm2 reads every file in DynamicProfiles and reloads them while it runs.
+# iTerm2 owns that directory and recreates it, so link the profiles into it
+# rather than replacing the directory itself.
+- name: Ensure iTerm2 DynamicProfiles directory exists
+  ansible.builtin.file:
+    path: "{{ iterm2_dynamic_profiles_dir }}"
+    state: directory
+    mode: "0755"
+  when: ansible_facts.os_family == 'Darwin'
+  tags: [iterm2, desktop, dotfiles]
+
+- name: Link iTerm2 dynamic profiles
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ item }}"
+      dest: "{{ iterm2_dynamic_profiles_dir }}/{{ item | basename }}"
+  loop: "{{ query('ansible.builtin.fileglob', dotfiles_dir ~ '/.config/iterm2/DynamicProfiles/*.json') | sort }}"
+  loop_control:
+    label: "{{ item | basename }}"
+  when: ansible_facts.os_family == 'Darwin'
+  tags: [iterm2, desktop, dotfiles]

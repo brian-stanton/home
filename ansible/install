@@ -29,6 +29,7 @@ Components (optional; still work individually):
   zsh           zsh + login shell (Linux) + config
   neovim        build from ../neovim (next to this repo) + link config
   alacritty     terminal + config
+  iterm2        link iTerm2 dynamic profiles (macOS only)
   tmux          tmux package + ~/.tmux.conf
   fonts         Fira Code, Kode Mono
   desktop       Linux MATE + i3 packages, session, and configs
@@ -115,7 +116,7 @@ if [[ ${#COMPONENTS[@]} -eq 0 ]]; then
 else
   for component in "${COMPONENTS[@]}"; do
     case "${component}" in
-      neovim | zsh | alacritty | desktop | i3 | tmux | dotfiles | core) need_dotfiles=1 ;;
+      neovim | zsh | alacritty | iterm2 | desktop | i3 | tmux | dotfiles | core) need_dotfiles=1 ;;
     esac
   done
 fi

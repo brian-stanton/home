@@ -20,6 +20,7 @@
       }}
     repo_root: "{{ playbook_dir | dirname }}"
     dotfiles_dir: "{{ repo_root }}/dotfiles"
+    iterm2_dynamic_profiles_dir: "{{ home_dir }}/Library/Application Support/iTerm2/DynamicProfiles"
     src_root: "{{ repo_root | dirname }}"
     neovim_src: "{{ src_root }}/neovim"
     neovim_repo: https://github.com/neovim/neovim.git
