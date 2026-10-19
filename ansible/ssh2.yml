@@ -1,20 +1,30 @@
-- name: New SSH Keys
+---
+# SSH key only. Prefer: ./ansible/install ssh
+# If you sudo this playbook, keys still go in the login user's ~/.ssh
+# (not /root/.ssh).
+- name: SSH keys
   hosts: localhost
+  connection: local
+  gather_facts: true
   vars:
-    user: brian
+    user: "{{ lookup('env', 'SUDO_USER') or ansible_facts.user_id }}"
+    home_dir: >-
+      {{
+        ansible_facts.user_dir
+        if user == ansible_facts.user_id
+        else (
+          '/Users/' ~ user if ansible_facts.os_family == 'Darwin'
+          else '/home/' ~ user
+        )
+      }}
   tasks:
-    - name: "Create .ssh"
-      ansible.builtin.file:
-        path: "/home/{{ user }}/.ssh"
-        state: directory
-        mode: '0755'
-        owner: "{{ user }}"
+    - name: Refuse to install keys for root
+      ansible.builtin.assert:
+        that:
+          - user != 'root' or (lookup('env', 'HOME_ALLOW_ROOT') | default('0', true) | bool)
+        fail_msg: >-
+          Would write keys into root's ~/.ssh. Run without sudo
+          (./ansible/install ssh), or sudo from your normal login so
+          SUDO_USER is set.
 
-    - name: generate SSH key "id_ed25519"
-      community.crypto.openssh_keypair:
-        path: "/home/{{ user }}/.ssh/id_ed25519"
-        type: ed25519
-        state: present
-        force: no
-        owner: "{{ user }}"
-
+    - ansible.builtin.import_tasks: tasks/ssh.yml

@@ -1,0 +1,9 @@
+---
+- name: Install tmux
+  ansible.builtin.include_tasks:
+    file: tasks/_packages.yml
+    apply:
+      tags: [always]
+  vars:
+    packages: "{{ tmux_packages }}"
+    package_label: tmux

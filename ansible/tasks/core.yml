@@ -1,0 +1,9 @@
+---
+- name: Install core packages
+  ansible.builtin.include_tasks:
+    file: tasks/_packages.yml
+    apply:
+      tags: [always]
+  vars:
+    packages: "{{ core_packages }}"
+    package_label: core packages

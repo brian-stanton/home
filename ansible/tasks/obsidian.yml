@@ -1,0 +1,45 @@
+---
+- name: Install flatpak
+  ansible.builtin.include_tasks:
+    file: tasks/_packages.yml
+    apply:
+      tags: [always]
+  vars:
+    packages: "{{ flatpak_packages }}"
+    package_label: flatpak
+  when: ansible_facts.os_family == 'Debian'
+
+- name: Add flathub remote
+  ansible.builtin.command: >
+    flatpak remote-add --if-not-exists flathub
+    https://flathub.org/repo/flathub.flatpakrepo
+  become: true
+  register: flathub_remote
+  changed_when: "'already exists' not in (flathub_remote.stderr | default(''))"
+  when: ansible_facts.os_family == 'Debian'
+
+- name: Install Obsidian from Flathub
+  ansible.builtin.command: flatpak install flathub md.obsidian.Obsidian -y
+  become: true
+  register: obsidian_flatpak
+  changed_when: "'is already installed' not in (obsidian_flatpak.stdout | default(''))"
+  when: ansible_facts.os_family == 'Debian'
+
+- name: Link Obsidian into /usr/local/bin
+  ansible.builtin.file:
+    src: /var/lib/flatpak/exports/bin/md.obsidian.Obsidian
+    dest: /usr/local/bin/obsidian
+    state: link
+    force: true
+  become: true
+  when: ansible_facts.os_family == 'Debian'
+
+- name: Install Obsidian (Darwin)
+  ansible.builtin.include_tasks:
+    file: tasks/_casks.yml
+    apply:
+      tags: [always]
+  vars:
+    casks: "{{ obsidian_casks }}"
+    package_label: Obsidian
+  when: ansible_facts.os_family == 'Darwin'

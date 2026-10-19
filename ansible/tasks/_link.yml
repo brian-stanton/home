@@ -1,0 +1,27 @@
+---
+- name: "Stat {{ link.dest }}"
+  ansible.builtin.stat:
+    path: "{{ link.dest }}"
+  register: _dot_stat
+
+# A real file here is config this machine had before the repo did. Keep it:
+# the first run on an existing machine must never destroy working config.
+# Timestamped so repeated runs can't clobber an earlier rescue.
+- name: "Move the existing {{ link.dest }} aside before linking"
+  ansible.builtin.command:
+    cmd: mv -- "{{ link.dest }}" "{{ link.dest }}.pre-ansible-{{ ansible_facts.date_time.epoch }}"
+  changed_when: true
+  when: _dot_stat.stat.exists and not _dot_stat.stat.islnk
+
+- name: "Report the file kept aside from {{ link.dest }}"
+  ansible.builtin.debug:
+    msg: "kept your previous {{ link.dest }} as {{ link.dest }}.pre-ansible-{{ ansible_facts.date_time.epoch }}"
+  when: _dot_stat.stat.exists and not _dot_stat.stat.islnk
+
+- name: "Link {{ link.dest }}"
+  ansible.builtin.file:
+    src: "{{ link.src }}"
+    dest: "{{ link.dest }}"
+    state: link
+    force: true
+  when: not (ansible_check_mode and _dot_stat.stat.exists and not _dot_stat.stat.islnk)

@@ -1,0 +1,18 @@
+---
+- name: Install apps packages
+  ansible.builtin.include_tasks:
+    file: tasks/_packages.yml
+    apply:
+      tags: [always]
+  vars:
+    packages: "{{ apps_packages }}"
+    package_label: apps packages
+
+- name: Install apps casks
+  ansible.builtin.include_tasks:
+    file: tasks/_casks.yml
+    apply:
+      tags: [always]
+  vars:
+    casks: "{{ apps_casks }}"
+    package_label: apps casks

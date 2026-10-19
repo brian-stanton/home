@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+# First boot on a bare Ubuntu box: packages, ansible, sudo for the login
+# user, clone this repo into ~/Documents/code/home. After this, as that user:
+#   cd ~/Documents/code/home && ./ansible/install linux
+set -euo pipefail
+
+if [[ "${EUID}" -ne 0 ]]; then
+  echo "bootstrap must run as root (sudo ./ansible/bootstrap)" >&2
+  exit 1
+fi
+
+user="${SUDO_USER:-}"
+if [[ -z "$user" || "$user" == "root" ]]; then
+  echo "run via sudo as your normal login, not as root: sudo ./ansible/bootstrap" >&2
+  exit 1
+fi
+
+if ! id -u "$user" >/dev/null 2>&1; then
+  echo "user ${user} does not exist" >&2
+  exit 1
+fi
+
+home_dir="$(getent passwd "$user" | cut -d: -f6)"
+if [[ -z "$home_dir" || ! -d "$home_dir" ]]; then
+  echo "could not resolve home directory for ${user}" >&2
+  exit 1
+fi
+
+apt-get update
+apt-get upgrade -y
+apt-get install -y mate software-properties-common curl git build-essential sudo
+apt-add-repository -y ppa:ansible/ansible
+apt-get update
+apt-get install -y ansible
+apt-get clean autoclean
+apt-get autoremove --yes
+
+adduser "$user" sudo
+grep -q "^${user} ALL=" /etc/sudoers || echo "${user} ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+
+code_root="${home_dir}/Documents/code"
+repo="${code_root}/home"
+sudo -u "$user" mkdir -p "$code_root"
+
+if [[ ! -d "${repo}/.git" ]]; then
+  sudo -u "$user" git clone git@github.com:brian-stanton/home.git "$repo"
+fi
+
+sudo -u "$user" git -C "$repo" submodule update --init --recursive
+
+echo "bootstrap done. as ${user}: cd ~/Documents/code/home && ./ansible/install linux"

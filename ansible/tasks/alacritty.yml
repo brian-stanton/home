@@ -1,0 +1,103 @@
+---
+- name: Install alacritty build dependencies (Debian)
+  ansible.builtin.include_tasks:
+    file: tasks/_packages.yml
+    apply:
+      tags: [always]
+  vars:
+    packages: "{{ alacritty_build_packages }}"
+    package_label: alacritty build dependencies
+  when: ansible_facts.os_family == 'Debian'
+
+- name: Check for cargo
+  ansible.builtin.stat:
+    path: "{{ home_dir }}/.cargo/bin/cargo"
+  register: cargo_bin
+  when: ansible_facts.os_family == 'Debian'
+
+- name: Install rustup
+  ansible.builtin.shell: |
+    curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+  args:
+    executable: /bin/bash
+    creates: "{{ home_dir }}/.cargo/bin/cargo"
+  when:
+    - ansible_facts.os_family == 'Debian'
+    - cargo_bin is not skipped
+    - not cargo_bin.stat.exists
+
+- name: Install alacritty from cargo
+  ansible.builtin.command: "{{ home_dir }}/.cargo/bin/cargo install alacritty"
+  environment:
+    PATH: "{{ home_dir }}/.cargo/bin:{{ ansible_facts.env.PATH }}"
+  args:
+    creates: "{{ home_dir }}/.cargo/bin/alacritty"
+  when: ansible_facts.os_family == 'Debian'
+
+- name: Link alacritty into /usr/local/bin
+  ansible.builtin.file:
+    src: "{{ home_dir }}/.cargo/bin/alacritty"
+    dest: /usr/local/bin/alacritty
+    state: link
+    force: true
+  become: true
+  when: ansible_facts.os_family == 'Debian'
+
+# Homebrew disabled the cask (2026-09-01): unsigned, fails Gatekeeper.
+# Official GitHub dmg + strip quarantine.
+- name: Check for Alacritty.app
+  ansible.builtin.stat:
+    path: /Applications/Alacritty.app
+  register: alacritty_app
+  when: ansible_facts.os_family == 'Darwin'
+
+- name: Ensure download cache exists
+  ansible.builtin.file:
+    path: "{{ home_dir }}/.cache/home"
+    state: directory
+    mode: "0755"
+  when:
+    - ansible_facts.os_family == 'Darwin'
+    - not alacritty_app.stat.exists
+
+- name: Download official Alacritty dmg
+  ansible.builtin.get_url:
+    url: "{{ alacritty_dmg_url }}"
+    dest: "{{ home_dir }}/.cache/home/Alacritty-v{{ alacritty_dmg_version }}.dmg"
+    mode: "0644"
+  when:
+    - ansible_facts.os_family == 'Darwin'
+    - not alacritty_app.stat.exists
+
+- name: Install Alacritty.app and clear quarantine
+  ansible.builtin.shell: |
+    set -euo pipefail
+    dmg="{{ home_dir }}/.cache/home/Alacritty-v{{ alacritty_dmg_version }}.dmg"
+    mount="{{ home_dir }}/.cache/home/alacritty-dmg"
+    mkdir -p "{{ home_dir }}/.cache/home"
+    rm -rf "$mount"
+    hdiutil attach -nobrowse -readonly -mountpoint "$mount" "$dmg"
+    trap 'hdiutil detach "$mount" || true' EXIT
+    rm -rf /Applications/Alacritty.app
+    cp -R "$mount/Alacritty.app" /Applications/Alacritty.app
+    xattr -cr /Applications/Alacritty.app
+  args:
+    creates: /Applications/Alacritty.app
+  when:
+    - ansible_facts.os_family == 'Darwin'
+    - not alacritty_app.stat.exists
+
+- name: Ensure ~/.local/bin exists
+  ansible.builtin.file:
+    path: "{{ home_dir }}/.local/bin"
+    state: directory
+    mode: "0755"
+  when: ansible_facts.os_family == 'Darwin'
+
+- name: Link alacritty CLI into ~/.local/bin
+  ansible.builtin.file:
+    src: /Applications/Alacritty.app/Contents/MacOS/alacritty
+    dest: "{{ home_dir }}/.local/bin/alacritty"
+    state: link
+    force: true
+  when: ansible_facts.os_family == 'Darwin'

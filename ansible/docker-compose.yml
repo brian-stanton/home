@@ -1,14 +1,14 @@
-version: '3.8'
-
 services:
   home:
     build:
-      context: .
+      context: ..
+      dockerfile: ansible/Dockerfile
       args:
-        user: abf
+        user: ${HOME_USER:-${USER}}
+        COMPONENTS: neovim
     image: home:latest
     container_name: home
     environment:
-      - DEBIAN_FRONTEND=noninteractive
-    command: ["tail",  "-f", "/dev/null"]
-
+      DEBIAN_FRONTEND: noninteractive
+      HOME_HEADLESS: "1"
+    command: ["tail", "-f", "/dev/null"]

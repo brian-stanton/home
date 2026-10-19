@@ -1,25 +1,21 @@
-
-- name: setup git email 
-  git_config:
+---
+- name: Set git user.email
+  community.general.git_config:
     name: user.email
     scope: global
-    value: "stanton.brian.c@gmail.com"
-  tags:
-  - git
+    value: "{{ git_user_email }}"
 
-- name: setup git username 
-  git_config:
+- name: Set git user.name
+  community.general.git_config:
     name: user.name
     scope: global
-    value: "brian-stanton"
-  tags:
-  - git
+    value: "{{ git_user_name }}"
 
-- name: Install useful git tools
-  become: true
-  apt:
-    name: [ "tig" ]
-  tags:
-    - install
-    - git
-
+- name: Install git tools
+  ansible.builtin.include_tasks:
+    file: tasks/_packages.yml
+    apply:
+      tags: [always]
+  vars:
+    packages: "{{ git_packages }}"
+    package_label: git tools

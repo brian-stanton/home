@@ -1,3 +1,7 @@
 **/*.swp
 ansible/adhoc.yml
+ansible/collections/
+ansible/tmp/
+*.retry
+.scratch/
 
