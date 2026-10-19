@@ -32,6 +32,27 @@
       dest: "{{ home_dir }}/.zprofile"
   tags: [zsh, core, dotfiles]
 
+# Per-host shell config, one file per machine, sourced from .zsh_profile.
+# Only the hosts/ subdirectory is linked: ~/.config/home itself stays a real
+# directory so runtime files written there (display.env) never land in the repo.
+- name: Ensure ~/.config/home exists
+  ansible.builtin.file:
+    path: "{{ home_dir }}/.config/home"
+    state: directory
+    mode: "0755"
+  tags: [zsh, core, dotfiles]
+
+- name: Link per-host shell configs
+  ansible.builtin.include_tasks:
+    file: tasks/_link.yml
+    apply:
+      tags: [always]
+  vars:
+    link:
+      src: "{{ dotfiles_dir }}/.config/home/hosts"
+      dest: "{{ home_dir }}/.config/home/hosts"
+  tags: [zsh, core, dotfiles]
+
 - name: Link alacritty config
   ansible.builtin.include_tasks:
     file: tasks/_link.yml
